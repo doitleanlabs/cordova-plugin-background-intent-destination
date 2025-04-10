@@ -39,7 +39,8 @@ module.exports = function (context) {
           'android:name': serviceName,
           'android:enabled': 'true',
           'android:exported': 'true',
-          'android:permission': 'outsystems.dohle.FILO.ALLOW_FILE_REQUEST'
+          'android:permission': 'outsystems.dohle.FILO.ALLOW_FILE_REQUEST',
+          'android:foregroundServiceType': 'dataSync'
         }
       });
       console.log("✅ Service injected:", serviceName);

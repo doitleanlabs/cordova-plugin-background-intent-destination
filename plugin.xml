@@ -28,13 +28,6 @@
         <config-file target="AndroidManifest.xml" platform="android" parent="/manifest" mode="merge">
             <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
         </config-file>
-	<config-file target="AndroidManifest.xml" parent="/*">
-            <uses-permission android:name="outsystems.dohle.FILO.ALLOW_FILE_REQUEST" />
-        </config-file>
-	<config-file target="AndroidManifest.xml" parent="/*">
-	    <permission android:name="outsystems.dohle.FILO.ALLOW_FILE_REQUEST"
-              	        android:protectionLevel="normal" />
-	</config-file>
         <config-file target="AndroidManifest.xml" platform="android" parent="/manifest/application" mode="merge">
             <provider
                 android:name="com.darryncampbell.cordova.plugin.intent.CordovaPluginIntentFileProvider"

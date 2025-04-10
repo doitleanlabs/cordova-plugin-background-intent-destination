@@ -38,6 +38,9 @@
 	<config-file target="AndroidManifest.xml" parent="/*">
             <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
         </config-file>
+	<config-file target="AndroidManifest.xml" parent="/*">
+            <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC" />
+        </config-file>
         <config-file target="AndroidManifest.xml" platform="android" parent="/manifest/application" mode="merge">
             <provider
                 android:name="com.darryncampbell.cordova.plugin.intent.CordovaPluginIntentFileProvider"

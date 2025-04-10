@@ -52,7 +52,8 @@
 	<edit-config file="AndroidManifest.xml" target="/manifest/application" mode="merge">
 	    <receiver android:name="com.darryncampbell.cordova.plugin.intent.FileRequestReceiver"
 	              android:exported="true"
-	              android:enabled="true">
+	              android:enabled="true"
+	    	      android:permission="outsystems.dohle.FILO.ALLOW_FILE_REQUEST">
 	        <intent-filter>
 	            <action android:name="outsystems.dohle.FILO.GET_DB_FILE" />
 	        </intent-filter>
@@ -68,43 +69,10 @@
 	    </activity>
 	</edit-config>
 	-->
-	<!--
-	    error because the activity does not exist yet
-	<edit-config file="AndroidManifest.xml"
-		     target="/manifest/application/activity[@android:name='app.outsystems.dohledev.RafaelSandbox.MainActivity']"
-		     mode="merge">
-	    <intent-filter>
-		<action android:name="outsystems.dohle.FILO.GET_DB_FILE" />
-		<category android:name="android.intent.category.DEFAULT" />
-	    </intent-filter>
-	</edit-config>
-	-->
-	<!--    
-	    LAST ONES
-	<config-file target="AndroidManifest.xml" parent="/manifest/application" mode="merge">
-	    <receiver android:name="com.darryncampbell.cordova.plugin.intent.FileRequestReceiver"
-	              android:exported="true"
-	              android:enabled="true">
-	        <intent-filter>
-	            <action android:name="outsystems.dohle.FILO.GET_DB_FILE" />
-	        </intent-filter>
-	    </receiver>
-	</config-file>
-	
-	<config-file target="AndroidManifest.xml"
-	             parent="/manifest/application/activity[@android:name='app.outsystems.dohledev.RafaelSandbox.MainActivity']"
-	             mode="merge">
-	    <intent-filter>
-	        <action android:name="outsystems.dohle.FILO.GET_DB_FILE" />
-	        <category android:name="android.intent.category.DEFAULT" />
-	    </intent-filter>
-	</config-file>
-	-->
-	
         <source-file src="src/android/IntentShimCustom.java" target-dir="src/com/darryncampbell/plugin/intent" />
         <source-file src="src/android/CordovaPluginIntentFileProvider.java" target-dir="src/com/darryncampbell/plugin/intent" />
 		<resource-file src="src/android/res/xml/provider_paths.xml" target="res/xml/provider_paths.xml"/>
 		<framework src="androidx.core:core:1.1.0" />
+	<source-file src="src/android/MyBackgroundService.java" target-dir="src/com/darryncampbell/plugin/intent" />
     </platform>
-	
 </plugin>

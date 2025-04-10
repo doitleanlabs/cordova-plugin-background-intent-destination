@@ -113,7 +113,12 @@ public class IntentShimCustom extends CordovaPlugin {
             try {
                 JSONObject obj = args.getJSONObject(0);
                 Intent intent = populateIntent(obj, callbackContext);
-                startService(intent);
+
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    context.startForegroundService(intent);
+                } else {
+                    context.startService(intent);
+                }
                 callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK));
             } catch (Exception e) {
                 Log.e(LOG_TAG, "Failed to start service: " + e.getMessage());

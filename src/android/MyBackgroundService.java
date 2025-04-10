@@ -44,7 +44,7 @@ public class MyBackgroundService extends Service {
                     Intent resultIntent = new Intent("outsystems.dohle.FILO.RETURN_DB_FILE");
                     resultIntent.putExtra("fileFound", true);
                     resultIntent.putExtra("filename", file.getName());
-                    resultIntent.putExtra("base64", base64);
+                    resultIntent.putExtra("base64", b64);
                     sendBroadcast(resultIntent);
                 } else {
                     Log.e(TAG, "File does not exist: " + file.getAbsolutePath());

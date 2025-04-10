@@ -110,10 +110,15 @@ public class IntentShimCustom extends CordovaPlugin {
                 callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.INVALID_ACTION));
                 return false;
             }
-            JSONObject obj = args.getJSONObject(0);
-            Intent intent = populateIntent(obj, callbackContext);
-            startService(intent);
-            callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK));
+            try {
+                JSONObject obj = args.getJSONObject(0);
+                Intent intent = populateIntent(obj, callbackContext);
+                startService(intent);
+                callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK));
+            } catch (Exception e) {
+                Log.e(LOG_TAG, "Failed to start service: " + e.getMessage());
+                callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.ERROR, e.getMessage()));
+            }
             return true;
         }
         else if (action.equals("registerBroadcastReceiver"))

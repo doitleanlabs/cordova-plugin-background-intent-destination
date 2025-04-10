@@ -41,4 +41,21 @@ public class MyBackgroundService extends Service {
         Log.d(TAG, "Background service stopped");
         super.onDestroy();
     }
+
+    private Notification createNotification() {
+        String channelId = "FILO_CHANNEL";
+        String channelName = "FILO Background Tasks";
+    
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationChannel channel = new NotificationChannel(channelId, channelName, NotificationManager.IMPORTANCE_LOW);
+            NotificationManager manager = getSystemService(NotificationManager.class);
+            manager.createNotificationChannel(channel);
+        }
+    
+        return new NotificationCompat.Builder(this, channelId)
+            .setContentTitle("FILO Background Service")
+            .setContentText("Working in background...")
+            .setSmallIcon(android.R.drawable.ic_menu_info_details)
+            .build();
+    }
 }

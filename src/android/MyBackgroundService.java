@@ -7,9 +7,14 @@ import android.app.NotificationManager;
 import android.content.Intent;
 import android.os.Build;
 import android.os.IBinder;
+import android.util.Base64;
 import android.util.Log;
 
 import androidx.core.app.NotificationCompat;
+
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 
 public class MyBackgroundService extends Service {
 
@@ -19,27 +24,47 @@ public class MyBackgroundService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.d(TAG, "Background service started");
 
-        // Required for foreground service
-        Notification notification = createNotification();
-        startForeground(1, notification);
-        // You can read extras from the intent if needed
-        if (intent != null && intent.hasExtra("exampleData")) {
-            String data = intent.getStringExtra("exampleData");
-            Log.d(TAG, "Received data: " + data);
+        try {
+            // ✅ Start as a foreground service
+            Notification notification = createNotification();
+            startForeground(1, notification);
+
+            // ✅ Action-based filter
+            if (intent != null && "outsystems.dohle.FILO.GET_DB_FILE".equals(intent.getAction())) {
+
+                File file = new File(getExternalFilesDir(null), "products/db/teste_100_produtos.db");
+
+                if (file.exists()) {
+                    byte[] bytes = Files.readAllBytes(file.toPath());
+                    String base64 = Base64.encodeToString(bytes, Base64.NO_WRAP);
+
+                    Intent resultIntent = new Intent("outsystems.dohle.FILO.RETURN_DB_FILE");
+                    resultIntent.putExtra("fileFound", true);
+                    resultIntent.putExtra("filename", file.getName());
+                    resultIntent.putExtra("base64", base64);
+                    sendBroadcast(resultIntent);
+                } else {
+                    Log.e(TAG, "File does not exist: " + file.getAbsolutePath());
+                    sendError("File not found at: " + file.getAbsolutePath(), "fileFound", false);
+                }
+
+            } else {
+                Log.w(TAG, "Received unknown or no action. Ignoring.");
+            }
+
+        } catch (Exception e) {
+            Log.e(TAG, "Failed to read file", e);
+            sendError("Error getting database file: " + e.getMessage());
+        } finally {
+            stopSelf();
         }
 
-        Intent broadcastIntent = new Intent();
-        broadcastIntent.setAction("outsystems.dohle.FILO.RETURN_DB_FILE");
-        broadcastIntent.putExtra("result", "Here's your data from service!");
-        sendBroadcast(broadcastIntent);
-
-        stopSelf();
         return START_NOT_STICKY;
     }
 
     @Override
     public IBinder onBind(Intent intent) {
-        return null; // Not a bound service
+        return null;
     }
 
     @Override
@@ -51,17 +76,47 @@ public class MyBackgroundService extends Service {
     private Notification createNotification() {
         String channelId = "FILO_CHANNEL";
         String channelName = "FILO Background Tasks";
-    
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationChannel channel = new NotificationChannel(channelId, channelName, NotificationManager.IMPORTANCE_LOW);
             NotificationManager manager = getSystemService(NotificationManager.class);
-            manager.createNotificationChannel(channel);
+            if (manager != null) {
+                manager.createNotificationChannel(channel);
+            }
         }
-    
+
         return new NotificationCompat.Builder(this, channelId)
             .setContentTitle("FILO Background Service")
             .setContentText("Working in background...")
             .setSmallIcon(android.R.drawable.ic_menu_info_details)
             .build();
+    }
+
+    private void sendError(String message, Object... extras) {
+        Intent errorIntent = new Intent("outsystems.dohle.FILO.RETURN_DB_FILE");
+        errorIntent.putExtra("error", message);
+
+        // Add optional extras (expects key-value pairs)
+        if (extras != null && extras.length % 2 == 0) {
+            for (int i = 0; i < extras.length; i += 2) {
+                String key = String.valueOf(extras[i]);
+                Object value = extras[i + 1];
+                if (value instanceof Boolean) {
+                    errorIntent.putExtra(key, (Boolean) value);
+                } else if (value instanceof Integer) {
+                    errorIntent.putExtra(key, (Integer) value);
+                } else if (value instanceof Long) {
+                    errorIntent.putExtra(key, (Long) value);
+                } else if (value instanceof Float) {
+                    errorIntent.putExtra(key, (Float) value);
+                } else if (value instanceof Double) {
+                    errorIntent.putExtra(key, (Double) value);
+                } else {
+                    errorIntent.putExtra(key, String.valueOf(value));
+                }
+            }
+        }
+
+        sendBroadcast(errorIntent);
     }
 }

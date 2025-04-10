@@ -36,7 +36,10 @@ public class MyBackgroundService extends Service {
 
                 if (file.exists()) {
                     byte[] bytes = Files.readAllBytes(file.toPath());
-                    String base64 = Base64.encodeToString(bytes, Base64.NO_WRAP);
+                    Log.d(TAG, "Bytes read: " + bytes.length);
+                    
+                    String b64 = Base64.encodeToString(bytes, Base64.NO_WRAP);
+                    Log.d(TAG, "Base64 length: " + b64.length());
 
                     Intent resultIntent = new Intent("outsystems.dohle.FILO.RETURN_DB_FILE");
                     resultIntent.putExtra("fileFound", true);

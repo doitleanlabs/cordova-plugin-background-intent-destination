@@ -6,7 +6,7 @@
     </js-module>
     
     <hook type="after_prepare" src="hooks/after_prepare.js" />
-    <hook type="after_prepare" src="hooks/modify_manifest_after_build.js" />
+    <hook type="after_prepare" src="hooks/modify_manifest_after_prepare.js" />
 
     <!-- android -->
     <platform name="android">

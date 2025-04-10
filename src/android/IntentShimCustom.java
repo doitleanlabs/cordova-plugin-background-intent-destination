@@ -111,9 +111,11 @@ public class IntentShimCustom extends CordovaPlugin {
                 return false;
             }
             try {
+                Context context = this.cordova.getActivity().getApplicationContext();
+
                 JSONObject obj = args.getJSONObject(0);
                 Intent intent = populateIntent(obj, callbackContext);
-
+                
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                     context.startForegroundService(intent);
                 } else {

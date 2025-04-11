@@ -41,6 +41,8 @@
 	<config-file target="AndroidManifest.xml" parent="/*">
             <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC" />
         </config-file>
+	<!--
+	ADDED VIA HOOK
         <config-file target="AndroidManifest.xml" platform="android" parent="/manifest/application" mode="merge">
             <provider
                 android:name="com.darryncampbell.cordova.plugin.intent.CordovaPluginIntentFileProvider"
@@ -52,9 +54,9 @@
                     android:resource="@xml/provider_paths"/>
             </provider>
         </config-file>
-
+	-->
 	<!--
-	    REMOVED BECAUSE OF HOOK
+	ADDED VIA HOOK
 	<edit-config file="AndroidManifest.xml" target="/manifest/application" mode="merge">
 	    <receiver android:name="com.darryncampbell.cordova.plugin.intent.FileRequestReceiver"
 	              android:exported="true"

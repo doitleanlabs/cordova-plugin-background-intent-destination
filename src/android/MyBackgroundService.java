@@ -35,6 +35,28 @@ public class MyBackgroundService extends Service {
                 File file = new File(getExternalFilesDir(null), "products/db/teste_100_produtos.db");
 
                 if (file.exists()) {
+                    Uri uri = FileProvider.getUriForFile(
+                        this,
+                        getPackageName() + ".darryncampbell.cordova.plugin.intent.fileprovider",
+                        file
+                    );
+                
+                    Log.d(TAG, "Generated file URI: " + uri.toString());
+                
+                    Intent resultIntent = new Intent("outsystems.dohle.FILO.RETURN_DB_FILE");
+                    resultIntent.setData(uri); // set URI in the intent data
+                    resultIntent.putExtra("fileFound", true);
+                    resultIntent.putExtra("filename", file.getName());
+                    resultIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION); // necessary for AppB to access
+                    sendBroadcast(resultIntent);
+                } else {
+                    Log.e(TAG, "File does not exist: " + file.getAbsolutePath());
+                    sendError("File not found at: " + file.getAbsolutePath(), "fileFound", false);
+                }
+                
+                /*
+                FILE AS BASE64
+                if (file.exists()) {
                     byte[] bytes = Files.readAllBytes(file.toPath());
                     Log.d(TAG, "Bytes read: " + bytes.length);
                     
@@ -50,6 +72,7 @@ public class MyBackgroundService extends Service {
                     Log.e(TAG, "File does not exist: " + file.getAbsolutePath());
                     sendError("File not found at: " + file.getAbsolutePath(), "fileFound", false);
                 }
+                */
 
             } else {
                 Log.w(TAG, "Received unknown or no action. Ignoring.");

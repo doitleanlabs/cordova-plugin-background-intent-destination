@@ -47,6 +47,10 @@ public class MyBackgroundService extends Service {
                 
                     Log.d(TAG, "Generated file URI: " + uri.toString());
                 
+                    // ✅ Explicitly grant URI permission
+                    grantUriPermission("app.outsystems.dohledev.DBFETCH", uri, Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                    Log.d(TAG, "Granted permission for appB");
+
                     Intent resultIntent = new Intent("outsystems.dohle.FILO.RETURN_DB_FILE");
                     resultIntent.putExtra("fileFound", true);
                     resultIntent.putExtra("filename", file.getName());

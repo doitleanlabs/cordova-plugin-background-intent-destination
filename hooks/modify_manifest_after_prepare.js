@@ -48,6 +48,35 @@ module.exports = function (context) {
       console.log("ℹ️ Service already present:", serviceName);
     }
 
+
+    /* FILE PROVIDER */ 
+    const providerName = 'com.darryncampbell.cordova.plugin.intent.CordovaPluginIntentFileProvider';
+    const authority = manifest.$.package + '.darryncampbell.cordova.plugin.intent.fileprovider';
+
+    const hasProvider = (application['provider'] || []).some(p => p.$['android:name'] === providerName);
+
+    if (!hasProvider) {
+      application['provider'] = application['provider'] || [];
+      application['provider'].push({
+        $: {
+          'android:name': providerName,
+          'android:authorities': authority,
+          'android:exported': 'false',
+          'android:grantUriPermissions': 'true'
+        },
+        'meta-data': [{
+          $: {
+            'android:name': 'android.support.FILE_PROVIDER_PATHS',
+            'android:resource': '@xml/provider_paths'
+          }
+        }]
+      });
+
+      console.log("✅ FileProvider added to AndroidManifest.xml");
+    } else {
+      console.log("ℹ️ FileProvider already present");
+    }
+
     const builder = new xml2js.Builder();
     const updatedXml = builder.buildObject(result);
     fs.writeFileSync(manifestPath, updatedXml, 'utf-8');

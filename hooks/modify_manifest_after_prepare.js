@@ -73,7 +73,7 @@ module.exports = function (context) {
         $: {
           'android:name': providerName,
           'android:authorities': authority,
-          'android:exported': 'false',
+          'android:exported': 'true',
           'android:grantUriPermissions': 'true'
         },
         'meta-data': [{

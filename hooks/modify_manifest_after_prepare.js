@@ -18,6 +18,17 @@ module.exports = function (context) {
     return;
   }
 
+  const configPath = path.join(context.opts.projectRoot, 'config.xml');
+  const configXml = fs.readFileSync(configPath, 'utf-8');
+
+  let appPackage = null;
+  xml2js.parseString(configXml, (err, result) => {
+    if (err || !result.widget || !result.widget.$ || !result.widget.$.id) {
+      throw new Error("❌ Could not read app package ID from config.xml");
+    }
+    appPackage = result.widget.$.id;
+  });
+
   const manifestXml = fs.readFileSync(manifestPath, 'utf-8');
 
   xml2js.parseString(manifestXml, (err, result) => {
@@ -52,7 +63,7 @@ module.exports = function (context) {
 
     /* FILE PROVIDER */ 
     const providerName = 'com.darryncampbell.cordova.plugin.intent.CordovaPluginIntentFileProvider';
-    const authority = manifest.$.package + '.darryncampbell.cordova.plugin.intent.fileprovider';
+    const authority = appPackage + '.darryncampbell.cordova.plugin.intent.fileprovider';
 
     const hasProvider = (app['provider'] || []).some(p => p.$['android:name'] === providerName);
 

@@ -26,6 +26,7 @@ module.exports = function (context) {
       return;
     }
 
+    const manifest = result['manifest'];
     const app = result['manifest']['application'][0];
 
     // ✅ Inject MyBackgroundService if not already there
@@ -53,11 +54,11 @@ module.exports = function (context) {
     const providerName = 'com.darryncampbell.cordova.plugin.intent.CordovaPluginIntentFileProvider';
     const authority = manifest.$.package + '.darryncampbell.cordova.plugin.intent.fileprovider';
 
-    const hasProvider = (application['provider'] || []).some(p => p.$['android:name'] === providerName);
+    const hasProvider = (app['provider'] || []).some(p => p.$['android:name'] === providerName);
 
     if (!hasProvider) {
-      application['provider'] = application['provider'] || [];
-      application['provider'].push({
+      app['provider'] = app['provider'] || [];
+      app['provider'].push({
         $: {
           'android:name': providerName,
           'android:authorities': authority,

@@ -47,11 +47,10 @@ public class MyBackgroundService extends Service {
                 
                     Log.d(TAG, "Generated file URI: " + uri.toString());
                 
-                    Intent resultIntent = new Intent();
-                    resultIntent.setAction("outsystems.dohle.FILO.RETURN_DB_FILE"); // ✅ add this line!
-                    resultIntent.setData(uri); // set URI in the intent data
+                    Intent resultIntent = new Intent("outsystems.dohle.FILO.RETURN_DB_FILE");
                     resultIntent.putExtra("fileFound", true);
                     resultIntent.putExtra("filename", file.getName());
+                    resultIntent.putExtra("fileUri", uri);
                     resultIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION); // necessary for AppB to access
                     sendBroadcast(resultIntent);
                 } else {

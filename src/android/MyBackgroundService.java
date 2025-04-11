@@ -9,12 +9,16 @@ import android.os.Build;
 import android.os.IBinder;
 import android.util.Base64;
 import android.util.Log;
+import android.net.Uri;
 
 import androidx.core.app.NotificationCompat;
+import androidx.core.content.FileProvider;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+
+import java.io.File;
 
 public class MyBackgroundService extends Service {
 

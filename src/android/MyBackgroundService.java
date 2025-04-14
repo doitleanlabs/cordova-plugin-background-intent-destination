@@ -29,11 +29,11 @@ public class MyBackgroundService extends Service {
         Log.d(TAG, "Background service started");
 
         try {
-            // ✅ Start as a foreground service
+            // Start as a foreground service
             Notification notification = createNotification();
             startForeground(1, notification);
 
-            // ✅ Action-based filter
+            // Action-based filter
             if (intent != null && "outsystems.dohle.FILO.GET_DB_FILE".equals(intent.getAction())) {
 
                 File file = new File(getExternalFilesDir(null), "products/db/teste_100_produtos.db");
@@ -44,11 +44,19 @@ public class MyBackgroundService extends Service {
                         getPackageName() + ".darryncampbell.cordova.plugin.intent.fileprovider",
                         file
                     );
-                
+                    
                     Log.d(TAG, "Generated file URI: " + uri.toString());
-                
-                    // ✅ Explicitly grant URI permission
-                    grantUriPermission("app.outsystems.dohledev.DBFETCH", uri, Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                    
+                    String targetPackage = intent.getStringExtra("targetPackage");
+                    if (targetPackage == null || targetPackage.isEmpty()) {
+                        Log.e(TAG, "❌ Missing targetPackage extra — cannot grant permission");
+                        sendError("Missing targetPackage", "fileFound", false);
+                        stopSelf();
+                        return START_NOT_STICKY;
+                    }
+
+                    // Explicitly grant URI permission
+                    grantUriPermission(targetPackage, uri, Intent.FLAG_GRANT_READ_URI_PERMISSION);
                     Log.d(TAG, "Granted permission for appB");
 
                     Intent resultIntent = new Intent("outsystems.dohle.FILO.RETURN_DB_FILE");

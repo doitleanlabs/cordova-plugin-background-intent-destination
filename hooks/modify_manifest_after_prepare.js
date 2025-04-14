@@ -22,11 +22,28 @@ module.exports = function (context) {
   const configXml = fs.readFileSync(configPath, 'utf-8');
 
   let appPackage = null;
+  let requiredPackages = [];
+
   xml2js.parseString(configXml, (err, result) => {
     if (err || !result.widget || !result.widget.$ || !result.widget.$.id) {
       throw new Error("❌ Could not read app package ID from config.xml");
     }
     appPackage = result.widget.$.id;
+
+    // Extract <preference name="targetPackages" value="app.one,app.two" />
+    const preferences = result.widget.preference || [];
+    const targetPref = preferences.find(p => p.$.name === 'targetPackages');
+
+    if (targetPref && targetPref.$.value) {
+      requiredPackages = targetPref.$.value
+        .split(',')
+        .map(pkg => pkg.trim())
+        .filter(pkg => pkg.length > 0);
+    }
+
+    if (requiredPackages.length === 0) {
+      console.warn("⚠️ No targetPackages found in config.xml <preference name=\"targetPackages\" ... />");
+    }
   });
 
   const manifestXml = fs.readFileSync(manifestPath, 'utf-8');
@@ -90,21 +107,18 @@ module.exports = function (context) {
     }
 
     /* QUERIES*/
-    const queries = manifest.queries[0]['package'] || [];
-    const requiredPackages = [
-      'app.outsystems.dohledev.DBORIGIN',
-      'app.outsystems.dohledev.DBFETCH'
-    ];
+    manifest.queries = manifest.queries || [{}];
+    manifest.queries[0]['package'] = manifest.queries[0]['package'] || [];
+
+    const existingQueries = manifest.queries[0]['package'];
 
     requiredPackages.forEach(pkg => {
-      const alreadyPresent = queries.some(entry => entry.$ && entry.$['android:name'] === pkg);
+      const alreadyPresent = existingQueries.some(entry => entry.$ && entry.$['android:name'] === pkg);
       if (!alreadyPresent) {
-        queries.push({ $: { 'android:name': pkg } });
+        existingQueries.push({ $: { 'android:name': pkg } });
         console.log(`✅ Added <queries> entry for package: ${pkg}`);
       }
     });
-
-    manifest.queries[0]['package'] = queries;
 
     const builder = new xml2js.Builder();
     const updatedXml = builder.buildObject(result);

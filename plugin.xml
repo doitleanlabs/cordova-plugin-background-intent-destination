@@ -7,14 +7,18 @@
     
     <hook type="after_prepare" src="hooks/after_prepare.js" />
     <hook type="after_prepare" src="hooks/modify_manifest_after_prepare.js" />
+    <preference name="targetPackages" />
 
     <!-- android -->
     <platform name="android">
+        <config-file target="config.xml" parent="/*">
+            <preference name="targetPackages" value="$TARGET_PACKAGES"/>
+        </config-file>  
         <config-file target="res/xml/config.xml" parent="/*">
-		<feature name="IntentShimCustom">
-	    		<param name="android-package" value="com.darryncampbell.cordova.plugin.intent.IntentShimCustom" />
-	    		<param name="onload" value="true" />
-		</feature>
+            <feature name="IntentShimCustom">
+                    <param name="android-package" value="com.darryncampbell.cordova.plugin.intent.IntentShimCustom" />
+                    <param name="onload" value="true" />
+            </feature>
         </config-file>
         <config-file target="AndroidManifest.xml" platform="android" parent="/manifest/application/activity" mode="merge">
             <intent-filter>
@@ -25,20 +29,20 @@
         <config-file target="AndroidManifest.xml" platform="android" parent="/manifest" mode="merge">
             <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
         </config-file>
-	<config-file target="AndroidManifest.xml" platform="android" parent="/manifest" mode="merge">
+	    <config-file target="AndroidManifest.xml" platform="android" parent="/manifest" mode="merge">
             <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
         </config-file>
-	<config-file target="AndroidManifest.xml" parent="/*">
+	    <config-file target="AndroidManifest.xml" parent="/*">
 	    <permission android:name="outsystems.dohle.FILO.ALLOW_FILE_REQUEST"
               	        android:protectionLevel="normal" />
-	</config-file>
-	<config-file target="AndroidManifest.xml" parent="/*">
+        </config-file>
+        <config-file target="AndroidManifest.xml" parent="/*">
             <uses-permission android:name="outsystems.dohle.FILO.ALLOW_FILE_REQUEST" />
         </config-file>
-	<config-file target="AndroidManifest.xml" parent="/*">
+	    <config-file target="AndroidManifest.xml" parent="/*">
             <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
         </config-file>
-	<config-file target="AndroidManifest.xml" parent="/*">
+	    <config-file target="AndroidManifest.xml" parent="/*">
             <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC" />
         </config-file>
 	<!--
@@ -79,8 +83,8 @@
 	-->
         <source-file src="src/android/IntentShimCustom.java" target-dir="src/com/darryncampbell/plugin/intent" />
         <source-file src="src/android/CordovaPluginIntentFileProvider.java" target-dir="src/com/darryncampbell/plugin/intent" />
-   	<resource-file src="src/android/res/xml/provider_paths.xml" target="res/xml/provider_paths.xml"/>
-	<framework src="androidx.core:core:1.1.0" />
-	<source-file src="src/android/MyBackgroundService.java" target-dir="src/com/darryncampbell/plugin/intent" />
+   	    <resource-file src="src/android/res/xml/provider_paths.xml" target="res/xml/provider_paths.xml"/>
+	    <framework src="androidx.core:core:1.1.0" />
+	    <source-file src="src/android/MyBackgroundService.java" target-dir="src/com/darryncampbell/plugin/intent" />
     </platform>
 </plugin>

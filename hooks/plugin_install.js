@@ -9,8 +9,8 @@ module.exports = function (context) {
   const builder = new xml2js.Builder();
 
   const cliVars = context.opts.plugin?.variables || {};
-  console.logg('plugin', context.opts.plugin);
-  console.logg('cliVars', cliVars);
+  console.log('plugin', context.opts.plugin);
+  console.log('cliVars', cliVars);
   const targetPackages = cliVars.TARGETPACKAGES;
 
   if (!targetPackages) {

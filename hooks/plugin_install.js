@@ -1,43 +1,40 @@
 const fs = require('fs');
 const path = require('path');
-const xml2js = require('xml2js');
+const semver = require('semver');
 
 module.exports = function (context) {
-  const configPath = path.join(context.opts.projectRoot, 'config.xml');
-  const configXml = fs.readFileSync(configPath, 'utf-8');
-  const parser = new xml2js.Parser();
-  const builder = new xml2js.Builder();
+  const basePath = usesNewStructure ? path.join(projectRoot, 'platforms', 'android', 'app', 'src', 'main') : path.join(projectRoot, 'platforms', 'android');
+  var configPath = path.join(basePath, 'res', 'xml', 'config.xml');
 
-  const cliVars = context.opts.plugin?.variables || {};
-  console.log('plugin', context.opts.plugin);
-  console.log('cliVars', cliVars);
-  const targetPackages = cliVars.TARGETPACKAGES;
+  const config = getConfigParser(context, configPath);
+  const targetPackages = config.getPreference('TARGETPACKAGES');
 
   if (!targetPackages) {
-    console.warn("⚠️ TARGETPACKAGES variable not provided during plugin install.");
+    console.warn("⚠️ TARGETPACKAGES not found in config.xml <preference>");
     return;
   }
-  console.warn("📦 TARGETPACKAGES FOUND: " + targetPackages);
 
-  parser.parseString(configXml, (err, result) => {
-    if (err) throw err;
+  console.log("✅ TARGETPACKAGES found in config.xml:", targetPackages);
 
-    result.widget.preference = result.widget.preference || [];
-
-    // Remove existing
-    result.widget.preference = result.widget.preference.filter(p => p.$.name !== 'TARGETPACKAGES');
-
-    // Write new
-    result.widget.preference.push({
-      $: { name: 'TARGETPACKAGES', value: targetPackages }
-    });
-
-    const updatedXml = builder.buildObject(result);
-    fs.writeFileSync(configPath, updatedXml, 'utf-8');
-    console.log("✅ TARGETPACKAGES written to config.xml:", targetPackages);
-  });
+  // Optional: write it back into config.xml again to ensure consistency
+  // This is safe and ensures it can be used in after_prepare
+  config.removePreference('TARGETPACKAGES'); // Clean any duplicate
+  config.setPreference('TARGETPACKAGES', targetPackages);
+  config.write();
+  console.log("✅ Rewrote TARGETPACKAGES into config.xml for future hooks.");
 };
 
+// Helper to load correct ConfigParser for your Cordova version
+function getConfigParser(context, configPath) {
+  let ConfigParser;
+  if (semver.lt(context.opts.cordova.version, '5.4.0')) {
+    ConfigParser = context.requireCordovaModule('cordova-lib/src/ConfigParser/ConfigParser');
+  } else {
+    ConfigParser = context.requireCordovaModule('cordova-common/src/ConfigParser/ConfigParser');
+  }
+
+  return new ConfigParser(configPath);
+}
 
 /*
 // hooks/plugin_install.js

@@ -89,6 +89,23 @@ module.exports = function (context) {
       console.log("ℹ️ FileProvider already present");
     }
 
+    /* QUERIES*/
+    const queries = manifest.queries[0]['package'] || [];
+    const requiredPackages = [
+      'app.outsystems.dohledev.DBORIGIN',
+      'app.outsystems.dohledev.DBFETCH'
+    ];
+
+    requiredPackages.forEach(pkg => {
+      const alreadyPresent = queries.some(entry => entry.$ && entry.$['android:name'] === pkg);
+      if (!alreadyPresent) {
+        queries.push({ $: { 'android:name': pkg } });
+        console.log(`✅ Added <queries> entry for package: ${pkg}`);
+      }
+    });
+
+    manifest.queries[0]['package'] = queries;
+
     const builder = new xml2js.Builder();
     const updatedXml = builder.buildObject(result);
     fs.writeFileSync(manifestPath, updatedXml, 'utf-8');

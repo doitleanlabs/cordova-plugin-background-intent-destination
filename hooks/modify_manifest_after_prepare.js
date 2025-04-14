@@ -39,6 +39,7 @@ module.exports = function (context) {
   const configParser = getConfigParser(context, configPath);
   const targetPackagesRaw = configParser.getPreference('TARGETPACKAGES') || '';
 
+  console.log('targetPackagesRaw', targetPackagesRaw);
   const requiredPackages = targetPackagesRaw
     .split(',')
     .map(pkg => pkg.trim())

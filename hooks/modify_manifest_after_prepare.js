@@ -36,16 +36,16 @@ module.exports = function (context) {
 
     // ✅ Extract <preference name="targetPackages" ... />
     const preferences = result.widget.preference || [];
-    const targetPref = preferences.find(p => p.$.name === 'targetPackages');
+    const targetPref = preferences.find(p => p.$.name === 'TARGETPACKAGES');
 
     if (targetPref && targetPref.$.value) {
       requiredPackages = targetPref.$.value
         .split(',')
         .map(p => p.trim())
         .filter(Boolean);
-      console.log("📦 Found targetPackages in config.xml:", requiredPackages);
+      console.log("📦 Found TARGETPACKAGES in config.xml:", requiredPackages);
     } else {
-      console.warn("⚠️ No <preference name=\"targetPackages\" ... /> found in config.xml");
+      console.warn("⚠️ No <preference name=\"TARGETPACKAGES\" ... /> found in config.xml");
     }
   });
 

@@ -1,6 +1,19 @@
 const fs = require('fs');
 const path = require('path');
 const xml2js = require('xml2js');
+const semver = require('semver');
+
+// Helper to get the correct ConfigParser for your Cordova version
+function getConfigParser(context, configPath) {
+  let ConfigParser;
+  if (semver.lt(context.opts.cordova.version, '5.4.0')) {
+    ConfigParser = context.requireCordovaModule('cordova-lib/src/ConfigParser/ConfigParser');
+  } else {
+    ConfigParser = context.requireCordovaModule('cordova-common/src/ConfigParser/ConfigParser');
+  }
+
+  return new ConfigParser(configPath);
+}
 
 module.exports = function (context) {
   const manifestPath = path.join(

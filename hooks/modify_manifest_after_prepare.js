@@ -107,6 +107,7 @@ module.exports = function (context) {
     }
 
     /* QUERIES*/
+    manifest.queries = manifest.queries || [{}];
     const queries = manifest.queries[0]['package'] || [];
 
     requiredPackages.forEach(pkg => {

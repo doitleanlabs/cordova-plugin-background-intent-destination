@@ -1,3 +1,4 @@
+// hooks/plugin_install.js
 const fs = require('fs');
 const path = require('path');
 const xml2js = require('xml2js');
@@ -11,25 +12,24 @@ module.exports = function (context) {
   parser.parseString(configXml, (err, result) => {
     if (err) throw err;
 
-    const preferences = result.widget.preference || [];
+    const cliVars = context.opts.cli_variables || {};
+    const targetPackages = cliVars.TARGETPACKAGES;
 
-    const targetPackages = context.opts.cli_variables?.TARGETPACKAGES;
     if (!targetPackages) {
-      console.warn("⚠️ TARGETPACKAGES variable not provided — skipping injection into config.xml");
+      console.warn("⚠️ No TARGETPACKAGES variable provided during plugin install");
       return;
     }
 
-    console.warn("✅ TARGETPACKAGES found: " + targetPackages);
-    // Remove existing preference if present
+    const preferences = result.widget.preference || [];
+    // Remove if it already exists
     result.widget.preference = preferences.filter(p => p.$.name !== 'TARGETPACKAGES');
 
-    // Add updated one
     result.widget.preference.push({
       $: { name: 'TARGETPACKAGES', value: targetPackages }
     });
 
     const updatedXml = builder.buildObject(result);
     fs.writeFileSync(configPath, updatedXml, 'utf-8');
-    console.log("✅ Wrote TARGETPACKAGES into config.xml:", targetPackages);
+    console.log("✅ TARGETPACKAGES written to config.xml:", targetPackages);
   });
 };

@@ -5,11 +5,12 @@
     	<clobbers target="intentShimCustom" />
     </js-module>
 
+    <variable name="TARGETPACKAGES" />
     <preference name="TARGETPACKAGES"/>
 
     <!-- android -->
     <platform name="android">
-        <!-- <hook type="after_plugin_install" src="hooks/plugin_install.js" /> -->
+        <hook type="after_plugin_install" src="hooks/plugin_install.js" />
         <hook type="after_prepare" src="hooks/after_prepare.js" />
         <hook type="after_prepare" src="hooks/modify_manifest_after_prepare.js" />
 

@@ -23,16 +23,8 @@ module.exports = function (context) {
 
   let appPackage = null;
 
-  const pluginVariables = context.opts.cli_variables || {};
-  const targetPackagesRaw = pluginVariables.targetPackages || pluginVariables.TARGET_PACKAGES;
-
-
-    console.log("cli_variables", context.opts.cli_variables);
-    console.log("targetPackagesRaw", targetPackagesRaw);
-
-  const requiredPackages = targetPackagesRaw
-    ? targetPackagesRaw.split(',').map(p => p.trim()).filter(Boolean)
-    : [];
+  
+  let requiredPackages = null;
 
   xml2js.parseString(configXml, (err, result) => {
     if (err || !result.widget || !result.widget.$ || !result.widget.$.id) {
@@ -40,6 +32,21 @@ module.exports = function (context) {
     }
   
     appPackage = result.widget.$.id;
+
+
+    // ✅ Extract <preference name="targetPackages" ... />
+    const preferences = result.widget.preference || [];
+    const targetPref = preferences.find(p => p.$.name === 'targetPackages');
+
+    if (targetPref && targetPref.$.value) {
+      requiredPackages = targetPref.$.value
+        .split(',')
+        .map(p => p.trim())
+        .filter(Boolean);
+      console.log("📦 Found targetPackages in config.xml:", requiredPackages);
+    } else {
+      console.warn("⚠️ No <preference name=\"targetPackages\" ... /> found in config.xml");
+    }
   });
 
   const manifestXml = fs.readFileSync(manifestPath, 'utf-8');

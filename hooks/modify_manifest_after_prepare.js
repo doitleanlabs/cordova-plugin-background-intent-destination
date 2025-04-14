@@ -27,6 +27,11 @@ module.exports = function (context) {
     context.opts.plugin &&
     context.opts.plugin.variables &&
     context.opts.plugin.variables.TARGET_PACKAGES;
+
+    console.log("Plugin", context.opts.plugin);
+    console.log("Plugin Variables", context.opts.plugin.variables);
+    console.log("targetPackagesRaw", targetPackagesRaw);
+
   const requiredPackages = targetPackagesRaw
     ? targetPackagesRaw.split(',').map(p => p.trim()).filter(Boolean)
     : [];

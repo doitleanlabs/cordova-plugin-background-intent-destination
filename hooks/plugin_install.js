@@ -13,7 +13,7 @@ module.exports = function (context) {
 
     const preferences = result.widget.preference || [];
 
-    const targetPackages = context.opts.cli_variables?.TARGET_PACKAGES;
+    const targetPackages = context.opts.cli_variables?.targetPackages;
     if (!targetPackages) {
       console.warn("⚠️ TARGET_PACKAGES variable not provided — skipping injection into config.xml");
       return;

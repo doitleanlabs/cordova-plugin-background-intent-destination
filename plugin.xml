@@ -8,6 +8,8 @@
     <hook type="after_prepare" src="hooks/after_prepare.js" />
     <hook type="after_prepare" src="hooks/modify_manifest_after_prepare.js" />
 
+    <variable name="TARGET_PACKAGES" />
+
     <!-- android -->
     <platform name="android">
         <config-file target="res/xml/config.xml" parent="/*">

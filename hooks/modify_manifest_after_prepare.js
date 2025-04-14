@@ -108,17 +108,19 @@ module.exports = function (context) {
 
     /* QUERIES*/
     manifest.queries = manifest.queries || [{}];
-    const queries = manifest.queries[0]['package'] || [];
+    const queriesEntry = manifest.queries[0];
+
+    // Ensure 'package' key exists
+    queriesEntry['package'] = queriesEntry['package'] || [];
+    const existingQueries = queriesEntry['package'];
 
     requiredPackages.forEach(pkg => {
-      const alreadyPresent = queries.some(entry => entry.$ && entry.$['android:name'] === pkg);
+      const alreadyPresent = existingQueries.some(entry => entry.$ && entry.$['android:name'] === pkg);
       if (!alreadyPresent) {
-        queries.push({ $: { 'android:name': pkg } });
+        existingQueries.push({ $: { 'android:name': pkg } });
         console.log(`✅ Added <queries> entry for package: ${pkg}`);
       }
     });
-
-    manifest.queries[0]['package'] = queries;
 
     const builder = new xml2js.Builder();
     const updatedXml = builder.buildObject(result);

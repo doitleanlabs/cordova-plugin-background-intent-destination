@@ -4,15 +4,19 @@
     <js-module name="IntentShimCustom" src="www/IntentShimCustom.js">
     	<clobbers target="intentShimCustom" />
     </js-module>
-    
-    <hook type="after_plugin_install" src="hooks/plugin_install.js" />
-    <hook type="after_prepare" src="hooks/after_prepare.js" />
-    <hook type="after_prepare" src="hooks/modify_manifest_after_prepare.js" />
 
-    <preference name="TARGETPACKAGES" />
+    <preference name="TARGETPACKAGES"/>
 
     <!-- android -->
     <platform name="android">
+        <!-- <hook type="after_plugin_install" src="hooks/plugin_install.js" /> -->
+        <hook type="after_prepare" src="hooks/after_prepare.js" />
+        <hook type="after_prepare" src="hooks/modify_manifest_after_prepare.js" />
+
+        <config-file target="config.xml" parent="/*">
+            <preference name="TARGETPACKAGES" value="$TARGETPACKAGES"/>
+        </config-file>
+
         <config-file target="res/xml/config.xml" parent="/*">
             <feature name="IntentShimCustom">
                     <param name="android-package" value="com.darryncampbell.cordova.plugin.intent.IntentShimCustom" />

@@ -23,8 +23,21 @@ module.exports = function (context) {
 
   let appPackage = null;
 
+  const configParser = getConfigParser(context, configPath);
+  const targetPackagesRaw = configParser.getPreference('TARGETPACKAGES') || '';
+
+  const requiredPackages = targetPackagesRaw
+    .split(',')
+    .map(pkg => pkg.trim())
+    .filter(Boolean);
+
+  if (requiredPackages.length) {
+    console.log("📦 Found TARGETPACKAGES from ConfigParser:", requiredPackages);
+  } else {
+    console.warn("⚠️ TARGETPACKAGES preference not found or empty.");
+  }
+
   
-  let requiredPackages = null;
 
   xml2js.parseString(configXml, (err, result) => {
     if (err || !result.widget || !result.widget.$ || !result.widget.$.id) {
@@ -32,21 +45,6 @@ module.exports = function (context) {
     }
   
     appPackage = result.widget.$.id;
-
-
-    // ✅ Extract <preference name="targetPackages" ... />
-    const preferences = result.widget.preference || [];
-    const targetPref = preferences.find(p => p.$.name === 'TARGETPACKAGES');
-
-    if (targetPref && targetPref.$.value) {
-      requiredPackages = targetPref.$.value
-        .split(',')
-        .map(p => p.trim())
-        .filter(Boolean);
-      console.log("📦 Found TARGETPACKAGES in config.xml:", requiredPackages);
-    } else {
-      console.warn("⚠️ No <preference name=\"TARGETPACKAGES\" ... /> found in config.xml");
-    }
   });
 
   const manifestXml = fs.readFileSync(manifestPath, 'utf-8');

@@ -13,23 +13,23 @@ module.exports = function (context) {
 
     const preferences = result.widget.preference || [];
 
-    const targetPackages = context.opts.cli_variables?.targetPackages;
+    const targetPackages = context.opts.cli_variables?.TARGETPACKAGES;
     if (!targetPackages) {
-      console.warn("⚠️ TARGET_PACKAGES variable not provided — skipping injection into config.xml");
+      console.warn("⚠️ TARGETPACKAGES variable not provided — skipping injection into config.xml");
       return;
     }
 
-    console.warn("✅ TARGET_PACKAGES found: " + targetPackages);
+    console.warn("✅ TARGETPACKAGES found: " + targetPackages);
     // Remove existing preference if present
-    result.widget.preference = preferences.filter(p => p.$.name !== 'targetPackages');
+    result.widget.preference = preferences.filter(p => p.$.name !== 'TARGETPACKAGES');
 
     // Add updated one
     result.widget.preference.push({
-      $: { name: 'targetPackages', value: targetPackages }
+      $: { name: 'TARGETPACKAGES', value: targetPackages }
     });
 
     const updatedXml = builder.buildObject(result);
     fs.writeFileSync(configPath, updatedXml, 'utf-8');
-    console.log("✅ Wrote targetPackages into config.xml:", targetPackages);
+    console.log("✅ Wrote TARGETPACKAGES into config.xml:", targetPackages);
   });
 };

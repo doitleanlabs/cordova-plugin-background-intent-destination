@@ -7,7 +7,7 @@
     
     <hook type="after_prepare" src="hooks/after_prepare.js" />
     <hook type="after_prepare" src="hooks/modify_manifest_after_prepare.js" />
-    <preference name="targetPackages" />
+    <preference name="TARGET_PACKAGES" />
 
     <!-- android -->
     <platform name="android">

@@ -7,13 +7,9 @@
     
     <hook type="after_prepare" src="hooks/after_prepare.js" />
     <hook type="after_prepare" src="hooks/modify_manifest_after_prepare.js" />
-    <preference name="TARGET_PACKAGES" />
 
     <!-- android -->
     <platform name="android">
-        <config-file target="config.xml" parent="/*">
-            <preference name="targetPackages" value="$TARGET_PACKAGES"/>
-        </config-file>  
         <config-file target="res/xml/config.xml" parent="/*">
             <feature name="IntentShimCustom">
                     <param name="android-package" value="com.darryncampbell.cordova.plugin.intent.IntentShimCustom" />

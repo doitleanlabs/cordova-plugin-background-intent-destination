@@ -22,28 +22,21 @@ module.exports = function (context) {
   const configXml = fs.readFileSync(configPath, 'utf-8');
 
   let appPackage = null;
-  let requiredPackages = [];
+
+  const targetPackagesRaw =
+    context.opts.plugin &&
+    context.opts.plugin.variables &&
+    context.opts.plugin.variables.TARGET_PACKAGES;
+  const requiredPackages = targetPackagesRaw
+    ? targetPackagesRaw.split(',').map(p => p.trim()).filter(Boolean)
+    : [];
 
   xml2js.parseString(configXml, (err, result) => {
     if (err || !result.widget || !result.widget.$ || !result.widget.$.id) {
       throw new Error("❌ Could not read app package ID from config.xml");
     }
+  
     appPackage = result.widget.$.id;
-
-    // Extract <preference name="targetPackages" value="app.one,app.two" />
-    const preferences = result.widget.preference || [];
-    const targetPref = preferences.find(p => p.$.name === 'targetPackages');
-
-    if (targetPref && targetPref.$.value) {
-      requiredPackages = targetPref.$.value
-        .split(',')
-        .map(pkg => pkg.trim())
-        .filter(pkg => pkg.length > 0);
-    }
-
-    if (requiredPackages.length === 0) {
-      console.warn("⚠️ No targetPackages found in config.xml <preference name=\"targetPackages\" ... />");
-    }
   });
 
   const manifestXml = fs.readFileSync(manifestPath, 'utf-8');
@@ -114,6 +107,8 @@ module.exports = function (context) {
     queriesEntry['package'] = queriesEntry['package'] || [];
     const existingQueries = queriesEntry['package'];
 
+    console.log(`✅ Required package list: ${requiredPackages}`);
+    
     requiredPackages.forEach(pkg => {
       const alreadyPresent = existingQueries.some(entry => entry.$ && entry.$['android:name'] === pkg);
       if (!alreadyPresent) {

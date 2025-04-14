@@ -31,11 +31,13 @@ module.exports = function (context) {
     return;
   }
 
-  const configPath = path.join(context.opts.projectRoot, 'config.xml');
+  //const configPath = path.join(context.opts.projectRoot, 'config.xml');
+  const projectRoot = context.opts.projectRoot;
+  const usesNewStructure = fs.existsSync(path.join(projectRoot, 'platforms', 'android', 'app'));
+  const basePath = usesNewStructure ? path.join(projectRoot, 'platforms', 'android', 'app', 'src', 'main') : path.join(projectRoot, 'platforms', 'android');
+  const configPath = path.join(basePath, 'res', 'xml', 'config.xml');
+
   const configXml = fs.readFileSync(configPath, 'utf-8');
-
-  let appPackage = null;
-
   const configParser = getConfigParser(context, configPath);
   const targetPackagesRaw = configParser.getPreference('TARGETPACKAGES') || '';
 
@@ -50,8 +52,7 @@ module.exports = function (context) {
     console.warn("⚠️ TARGETPACKAGES preference not found or empty.");
   }
 
-  
-
+  let appPackage = null;
   xml2js.parseString(configXml, (err, result) => {
     if (err || !result.widget || !result.widget.$ || !result.widget.$.id) {
       throw new Error("❌ Could not read app package ID from config.xml");

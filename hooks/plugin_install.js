@@ -2,7 +2,7 @@ const fs = require('fs');
 const path = require('path');
 const semver = require('semver');
 
-module.exports = function (context) {
+module.exports = function (context) { 
   const projectRoot = context.opts.projectRoot;
   const usesNewStructure = fs.existsSync(path.join(projectRoot, 'platforms', 'android', 'app'));
   const basePath = usesNewStructure ? path.join(projectRoot, 'platforms', 'android', 'app', 'src', 'main') : path.join(projectRoot, 'platforms', 'android');
@@ -18,12 +18,14 @@ module.exports = function (context) {
 
   console.log("✅ TARGETPACKAGES found in config.xml:", targetPackages);
 
+  /*
   // Optional: write it back into config.xml again to ensure consistency
   // This is safe and ensures it can be used in after_prepare
   config.removePreference('TARGETPACKAGES'); // Clean any duplicate
   config.setPreference('TARGETPACKAGES', targetPackages);
   config.write();
   console.log("✅ Rewrote TARGETPACKAGES into config.xml for future hooks.");
+  */
 };
 
 // Helper to load correct ConfigParser for your Cordova version

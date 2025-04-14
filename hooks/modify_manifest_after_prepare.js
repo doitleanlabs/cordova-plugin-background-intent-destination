@@ -23,13 +23,11 @@ module.exports = function (context) {
 
   let appPackage = null;
 
-  const targetPackagesRaw =
-    context.opts.plugin &&
-    context.opts.plugin.variables &&
-    context.opts.plugin.variables.TARGET_PACKAGES;
+  const pluginVariables = context.opts.cli_variables || {};
+  const targetPackagesRaw = pluginVariables.targetPackages || pluginVariables.TARGET_PACKAGES;
 
-    console.log("Plugin", context.opts.plugin);
-    console.log("Plugin Variables", context.opts.plugin.variables);
+
+    console.log("cli_variables", context.opts.cli_variables);
     console.log("targetPackagesRaw", targetPackagesRaw);
 
   const requiredPackages = targetPackagesRaw

@@ -3,6 +3,7 @@ const path = require('path');
 const semver = require('semver');
 
 module.exports = function (context) {
+  const projectRoot = context.opts.projectRoot;
   const usesNewStructure = fs.existsSync(path.join(projectRoot, 'platforms', 'android', 'app'));
   const basePath = usesNewStructure ? path.join(projectRoot, 'platforms', 'android', 'app', 'src', 'main') : path.join(projectRoot, 'platforms', 'android');
   var configPath = path.join(basePath, 'res', 'xml', 'config.xml');

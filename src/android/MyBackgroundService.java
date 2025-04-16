@@ -35,7 +35,63 @@ public class MyBackgroundService extends Service {
 
             // Action-based filter
             if (intent != null && "outsystems.dohle.FILO.GET_DB_FILE".equals(intent.getAction())) {
+                String storeId = intent.getStringExtra("storeId");
+                File baseDir = new File(getExternalFilesDir(null), "db");
 
+                if (baseDir.exists() && baseDir.isDirectory()) {
+                    File[] files = baseDir.listFiles((dir, name) -> name.endsWith(".db"));
+                    if (files != null) {
+                        File latestFile = null;
+                        int maxVersion = -1;
+
+                        for (File f : files) {
+                            String name = f.getName();
+                            if (name.matches("^" + storeId + "_[\\d\\-]+_(\\d+)\\.db$")) {
+                                String[] parts = name.split("_|\\.");
+                                int version = Integer.parseInt(parts[2]);
+
+                                if (version > maxVersion) {
+                                    maxVersion = version;
+                                    latestFile = f;
+                                }
+                            }
+                        }
+
+                        if (latestFile != null) {
+                            Uri uri = FileProvider.getUriForFile(
+                                this,
+                                getPackageName() + ".darryncampbell.cordova.plugin.intent.fileprovider",
+                                latestFile
+                            );
+
+                            String targetPackage = intent.getStringExtra("targetPackage");
+                            if (targetPackage == null || targetPackage.isEmpty()) {
+                                Log.e(TAG, "❌ Missing targetPackage extra — cannot grant permission");
+                                sendError("Missing targetPackage", "fileFound", false);
+                                stopSelf();
+                                return START_NOT_STICKY;
+                            }
+
+                            grantUriPermission(targetPackage, uri, Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                            Log.d(TAG, "Granted permission for appB");
+
+                            Intent resultIntent = new Intent("outsystems.dohle.FILO.RETURN_DB_FILE");
+                            resultIntent.putExtra("fileFound", true);
+                            resultIntent.putExtra("filename", latestFile.getName());
+                            resultIntent.putExtra("version", maxVersion);
+                            resultIntent.putExtra("fileUri", uri);
+                            resultIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                            sendBroadcast(resultIntent);
+                            Log.d(TAG, "Generated file URI: " + uri.toString());
+                        } else {
+                            sendError("No matching file found for identifier " + storeId, "fileFound", false);
+                        }
+                    }
+                } else {
+                    sendError("Base folder does not exist: " + baseDir.getAbsolutePath(), "fileFound", false);
+                }
+
+                /* 
                 File file = new File(getExternalFilesDir(null), "products/db/teste_100_produtos.db");
 
                 if (file.exists()) {
@@ -69,27 +125,7 @@ public class MyBackgroundService extends Service {
                     Log.e(TAG, "File does not exist: " + file.getAbsolutePath());
                     sendError("File not found at: " + file.getAbsolutePath(), "fileFound", false);
                 }
-                
-                /*
-                FILE AS BASE64
-                if (file.exists()) {
-                    byte[] bytes = Files.readAllBytes(file.toPath());
-                    Log.d(TAG, "Bytes read: " + bytes.length);
-                    
-                    String b64 = Base64.encodeToString(bytes, Base64.NO_WRAP);
-                    Log.d(TAG, "Base64 length: " + b64.length());
-
-                    Intent resultIntent = new Intent("outsystems.dohle.FILO.RETURN_DB_FILE");
-                    resultIntent.putExtra("fileFound", true);
-                    resultIntent.putExtra("filename", file.getName());
-                    resultIntent.putExtra("base64", b64);
-                    sendBroadcast(resultIntent);
-                } else {
-                    Log.e(TAG, "File does not exist: " + file.getAbsolutePath());
-                    sendError("File not found at: " + file.getAbsolutePath(), "fileFound", false);
-                }
-                */
-
+                    */
             } else {
                 Log.w(TAG, "Received unknown or no action. Ignoring.");
             }

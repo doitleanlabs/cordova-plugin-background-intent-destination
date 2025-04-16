@@ -10,8 +10,8 @@
 
     <!-- android -->
     <platform name="android">
-        <!-- after_plugin_install  -->
-        <hook type="before_build" src="hooks/plugin_install.js" />
+        <!-- after_plugin_install 
+        <hook type="before_build" src="hooks/plugin_install.js" /> -->
         <hook type="after_prepare" src="hooks/after_prepare.js" />
         <hook type="after_prepare" src="hooks/modify_manifest_after_prepare.js" />
 

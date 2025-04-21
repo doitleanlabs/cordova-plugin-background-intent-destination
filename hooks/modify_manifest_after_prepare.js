@@ -94,7 +94,7 @@ module.exports = function (context) {
 
 
     /* FILE PROVIDER */ 
-    const providerName = 'com.darryncampbell.cordova.plugin.intent.CordovaPluginIntentFileProvider';
+    const providerName = 'com.darryncampbell.cordova.plugin.intent.CordovaPluginIntentBackgroundFileProvider';
     const authority = appPackage + '.darryncampbell.cordova.plugin.intent.fileprovider';
 
     const hasProvider = (app['provider'] || []).some(p => p.$['android:name'] === providerName);

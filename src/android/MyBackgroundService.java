@@ -36,17 +36,17 @@ public class MyBackgroundService extends Service {
             // Action-based filter
             if (intent != null && "outsystems.dohle.FILO.GET_DB_FILE".equals(intent.getAction())) {
                 String storeId = intent.getStringExtra("storeId");
-                File baseDir = new File(getExternalFilesDir(null), "db");
+                File baseDir = new File(getExternalFilesDir(null), "tempZip");
 
                 if (baseDir.exists() && baseDir.isDirectory()) {
-                    File[] files = baseDir.listFiles((dir, name) -> name.endsWith(".db"));
+                    File[] files = baseDir.listFiles((dir, name) -> name.endsWith(".zip"));
                     if (files != null) {
                         File latestFile = null;
                         int maxVersion = -1;
 
                         for (File f : files) {
                             String name = f.getName();
-                            if (name.matches("^" + storeId + "_[\\d\\-]+_(\\d+)\\.db$")) {
+                            if (name.matches("^" + storeId + "_[\\d\\-]+_(\\d+)\\.zip$")) {
                                 String[] parts = name.split("_|\\.");
                                 int version = Integer.parseInt(parts[2]);
 

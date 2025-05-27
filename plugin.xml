@@ -36,8 +36,7 @@
             <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
         </config-file>
 	    <config-file target="AndroidManifest.xml" parent="/*">
-	    <permission android:name="outsystems.dohle.FILO.ALLOW_FILE_REQUEST"
-              	        android:protectionLevel="normal" />
+	        <permission android:name="outsystems.dohle.FILO.ALLOW_FILE_REQUEST" android:protectionLevel="normal" />
         </config-file>
         <config-file target="AndroidManifest.xml" parent="/*">
             <uses-permission android:name="outsystems.dohle.FILO.ALLOW_FILE_REQUEST" />
@@ -50,7 +49,7 @@
         </config-file>
 	<!--
 	ADDED VIA HOOK
-	    
+	    -->
         <edit-config target="AndroidManifest.xml" parent="application">
 	  <service
 	      android:name="com.darryncampbell.cordova.plugin.intent.MyBackgroundService"
@@ -70,7 +69,7 @@
 		android:resource="@xml/provider_paths"/>
 	  </provider>
 	</edit-config>
-	-->
+	
         <source-file src="src/android/IntentShimCustom.java" target-dir="src/com/darryncampbell/plugin/intent" />
         <source-file src="src/android/CordovaPluginIntentBackgroundFileProvider.java" target-dir="src/com/darryncampbell/plugin/intent" />
    	    <resource-file src="src/android/res/xml/provider_paths.xml" target="res/xml/provider_paths.xml"/>

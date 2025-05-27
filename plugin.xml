@@ -52,38 +52,24 @@
         </config-file>
 	<!--
 	ADDED VIA HOOK
-        <config-file target="AndroidManifest.xml" platform="android" parent="/manifest/application" mode="merge">
-            <provider
-                android:name="com.darryncampbell.cordova.plugin.intent.CordovaPluginIntentBackgroundFileProvider"
-                android:authorities="${applicationId}.darryncampbell.cordova.plugin.intent.fileprovider"
-                android:exported="false"
-                android:grantUriPermissions="true">
-                <meta-data
-                    android:name="android.support.FILE_PROVIDER_PATHS"
-                    android:resource="@xml/provider_paths"/>
-            </provider>
-        </config-file>
-	-->
-	<!--
-	ADDED VIA HOOK
-	<edit-config file="AndroidManifest.xml" target="/manifest/application" mode="merge">
-	    <receiver android:name="com.darryncampbell.cordova.plugin.intent.FileRequestReceiver"
-	              android:exported="true"
-	              android:enabled="true"
-	    	      android:permission="outsystems.dohle.FILO.ALLOW_FILE_REQUEST">
-	        <intent-filter>
-	            <action android:name="outsystems.dohle.FILO.GET_DB_FILE" />
-	        </intent-filter>
-	    </receiver>
+        <edit-config target="AndroidManifest.xml" parent="application" mode="merge">
+	  <service
+	      android:name="com.darryncampbell.cordova.plugin.intent.MyBackgroundService"
+	      android:enabled="true"
+	      android:exported="true"
+	      android:foregroundServiceType="dataSync" />
 	</edit-config>
-
-	<edit-config file="AndroidManifest.xml" target="/manifest/application" mode="merge">
-	    <activity android:name="app.outsystems.dohledev.RafaelSandbox.MainActivity" android:exported="true">
-	        <intent-filter>
-	            <action android:name="outsystems.dohle.FILO.GET_DB_FILE" />
-	            <category android:name="android.intent.category.DEFAULT" />
-	        </intent-filter>
-	    </activity>
+	
+	<edit-config target="AndroidManifest.xml" parent="application" mode="merge">
+	  <provider
+	      android:name="com.darryncampbell.cordova.plugin.intent.CordovaPluginIntentBackgroundFileProvider"
+	      android:authorities="${applicationId}.darryncampbell.cordova.plugin.intent.fileprovider"
+	      android:exported="false"
+	      android:grantUriPermissions="true">
+	    <meta-data
+		android:name="android.support.FILE_PROVIDER_PATHS"
+		android:resource="@xml/provider_paths"/>
+	  </provider>
 	</edit-config>
 	-->
         <source-file src="src/android/IntentShimCustom.java" target-dir="src/com/darryncampbell/plugin/intent" />

@@ -31,7 +31,6 @@ module.exports = function (context) {
     return;
   }
 
-  //const configPath = path.join(context.opts.projectRoot, 'config.xml');
   const projectRoot = context.opts.projectRoot;
   const usesNewStructure = fs.existsSync(path.join(projectRoot, 'platforms', 'android', 'app'));
   const basePath = usesNewStructure ? path.join(projectRoot, 'platforms', 'android', 'app', 'src', 'main') : path.join(projectRoot, 'platforms', 'android');
@@ -52,12 +51,21 @@ module.exports = function (context) {
     console.warn("⚠️ TARGETPACKAGES preference not found or empty.");
   }
 
+  // ⚡️ Read the CUSTOM_PERMISSION from plugin variables, same style as TARGETPACKAGES
+  const customPermission = configParser.getPreference('CUSTOM_PERMISSION') || '';
+
+  if (customPermission) {
+    console.log(`✅ Found CUSTOM_PERMISSION from ConfigParser: ${customPermission}`);
+  } else {
+    console.warn("⚠️ CUSTOM_PERMISSION preference not found or empty.");
+  }
+
   let appPackage = null;
   xml2js.parseString(configXml, (err, result) => {
     if (err || !result.widget || !result.widget.$ || !result.widget.$.id) {
       throw new Error("❌ Could not read app package ID from config.xml");
     }
- 
+
     appPackage = result.widget.$.id;
   });
 
@@ -92,7 +100,6 @@ module.exports = function (context) {
       console.log("ℹ️ Service already present:", serviceName);
     }
 
-
     /* FILE PROVIDER */
     const providerName = 'com.darryncampbell.cordova.plugin.intent.CordovaPluginIntentBackgroundFileProvider';
     const authority = appPackage + '.darryncampbell.cordova.plugin.intent.fileprovider';
@@ -121,16 +128,15 @@ module.exports = function (context) {
       console.log("ℹ️ FileProvider already present");
     }
 
-    /* QUERIES*/
+    /* QUERIES */
     manifest.queries = manifest.queries || [{}];
     const queriesEntry = manifest.queries[0];
 
-    // Ensure 'package' key exists
     queriesEntry['package'] = queriesEntry['package'] || [];
     const existingQueries = queriesEntry['package'];
 
     console.log(`✅ Required package list: ${requiredPackages}`);
-   
+
     requiredPackages.forEach(pkg => {
       const alreadyPresent = existingQueries.some(entry => entry.$ && entry.$['android:name'] === pkg);
       if (!alreadyPresent) {
@@ -138,6 +144,25 @@ module.exports = function (context) {
         console.log(`✅ Added <queries> entry for package: ${pkg}`);
       }
     });
+
+    // 🚀 INJECT THE PERMISSIONS BLOCKS AT THE END
+    // ➜ The Source app should declare the <permission> + <uses-permission>
+    // ➜ The Destination app should declare only the <uses-permission> (you'll manually remove the <permission> part from here in your Destination variant)
+    if (customPermission) {
+      manifest['uses-permission'] = manifest['uses-permission'] || [];
+      const hasUsesPermission = manifest['uses-permission'].some(up => up.$['android:name'] === customPermission);
+
+      if (!hasUsesPermission) {
+        manifest['uses-permission'].push({
+          $: {
+            'android:name': customPermission
+          }
+        });
+        console.log(`✅ Uses-permission added: ${customPermission}`);
+      } else {
+        console.log(`ℹ️ Uses-permission already present: ${customPermission}`);
+      }
+    }
 
     const builder = new xml2js.Builder();
     const updatedXml = builder.buildObject(result);

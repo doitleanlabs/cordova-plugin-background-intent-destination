@@ -8,6 +8,7 @@
     <variable name="TARGETPACKAGES" />
     <variable name="CUSTOM_PERMISSION" />
     <preference name="TARGETPACKAGES"/>
+    <preference name="CUSTOM_PERMISSION"/>
 
     <!-- android -->
     <platform name="android">
@@ -16,6 +17,7 @@
 
         <config-file target="config.xml" parent="/*">
             <preference name="TARGETPACKAGES" value="$TARGETPACKAGES"/>
+            <preference name="CUSTOM_PERMISSION" value="$CUSTOM_PERMISSION"/>
         </config-file>
 
         <config-file target="res/xml/config.xml" parent="/*">

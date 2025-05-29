@@ -26,7 +26,7 @@
                     <param name="onload" value="true" />
             </feature>
         </config-file>
-        <!-- commend section for camera-plugin -->
+        <!-- commend section for camera-plugin 
         <config-file target="AndroidManifest.xml" platform="android" parent="/manifest/application/activity" mode="merge">
             <intent-filter>
                 <action android:name="com.darryncampbell.cordova.plugin.intent.ACTION" />
@@ -39,7 +39,8 @@
 	    <config-file target="AndroidManifest.xml" platform="android" parent="/manifest" mode="merge">
             <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
         </config-file>
-
+        -->
+        
         <config-file target="AndroidManifest.xml" parent="/*">
             <uses-permission android:name="$CUSTOM_PERMISSION" />
         </config-file>
